@@ -14,7 +14,7 @@ import (
 var tasks []task.Task
 
 func ReadInp() {
-	fmt.Println("Write command: add,  list, mark, delete, exit")
+	fmt.Println("Write command: add,  list, mark, delete, edit, exit")
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -57,6 +57,22 @@ func ReadInp() {
 				continue
 			}
 			task.DeleteTask(&tasks, id)
+			if err := storage.SaveTasks(tasks); err != nil {
+				fmt.Println("Failed to save")
+			}
+		case "edit":
+			partsEdit := strings.SplitN(line, " ", 3)
+			if len(partsEdit) < 3 {
+				fmt.Println("Len edit less then 3")
+				continue
+			}
+			id, err := strconv.Atoi(partsEdit[1])
+			if err != nil {
+				fmt.Println("id must be int")
+				continue
+			}
+			textEdit := partsEdit[2]
+			task.EditTask(&tasks, id, textEdit)
 			if err := storage.SaveTasks(tasks); err != nil {
 				fmt.Println("Failed to save")
 			}
