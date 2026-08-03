@@ -7,16 +7,16 @@ import (
 	"github.com/Hamza4ik/Golang_task_manager/internal/task"
 )
 
-func SaveTasks(tasks []task.Task) error {
+func SaveTasks(tasks []task.Task, path string) error {
 	data, err := json.MarshalIndent(tasks, "", " ")
 	if err != nil {
 		return err
 	}
-	return os.WriteFile("tasks.json", data, 0644)
+	return os.WriteFile(path, data, 0644)
 }
 
-func LoadTasks() ([]task.Task, error) {
-	data, err := os.ReadFile("tasks.json")
+func LoadTasks(path string) ([]task.Task, error) {
+	data, err := os.ReadFile(path)
 	if os.IsNotExist(err) {
 		return []task.Task{}, nil
 	}

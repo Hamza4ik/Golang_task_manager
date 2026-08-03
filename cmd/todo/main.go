@@ -13,6 +13,8 @@ import (
 
 var tasks []task.Task
 
+const tasksFile = "tasks.json"
+
 func ReadInp() {
 	fmt.Println("Write command: add,  list, mark, delete, edit, exit")
 	scanner := bufio.NewScanner(os.Stdin)
@@ -29,7 +31,7 @@ func ReadInp() {
 			}
 			text := parts[1]
 			task.AddTask(&tasks, task.Task{ID: len(tasks) + 1, Text: text, Done: false})
-			if err := storage.SaveTasks(tasks); err != nil {
+			if err := storage.SaveTasks(tasks, tasksFile); err != nil {
 				fmt.Println("Не удалось сохранить")
 			}
 		case "mark":
@@ -43,7 +45,7 @@ func ReadInp() {
 				continue
 			}
 			task.MarkDone(&tasks, id)
-			if err := storage.SaveTasks(tasks); err != nil {
+			if err := storage.SaveTasks(tasks, tasksFile); err != nil {
 				fmt.Println("Не удалось сохранить")
 			}
 		case "delete":
@@ -57,7 +59,7 @@ func ReadInp() {
 				continue
 			}
 			task.DeleteTask(&tasks, id)
-			if err := storage.SaveTasks(tasks); err != nil {
+			if err := storage.SaveTasks(tasks, tasksFile); err != nil {
 				fmt.Println("Failed to save")
 			}
 		case "edit":
@@ -73,7 +75,7 @@ func ReadInp() {
 			}
 			textEdit := partsEdit[2]
 			task.EditTask(&tasks, id, textEdit)
-			if err := storage.SaveTasks(tasks); err != nil {
+			if err := storage.SaveTasks(tasks, tasksFile); err != nil {
 				fmt.Println("Failed to save")
 			}
 		case "list":
@@ -91,7 +93,7 @@ func ReadInp() {
 }
 
 func main() {
-	loaded, err := storage.LoadTasks()
+	loaded, err := storage.LoadTasks(tasksFile)
 	if err != nil {
 		fmt.Println("Не удалось загрузить задачи, начинаю с пустого списка: ", err)
 		tasks = []task.Task{}
